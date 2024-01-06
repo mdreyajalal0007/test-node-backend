@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema(
     age: { type: Number, required: true },
     mobileNumber: { type: Number, required: true },
     email: { type: String, required: true },
+    password: { type: String, required: true },
   },
 
   { timestamps: true }
@@ -14,4 +15,3 @@ const userSchema = new mongoose.Schema(
 
 const User = mongoose.model("user", userSchema);
 module.exports = User;
-
