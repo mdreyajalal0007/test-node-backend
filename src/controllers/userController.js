@@ -102,8 +102,8 @@ async function handleLoginUser(req, res) {
     return res.status(400).json({ message: result.message });
   }
 
-  const token = result;
-  return res.status(200).json({ token /* other data */ });
+  const data = result;
+  return res.status(200).json({ data /* other data */ });
 }
 
 
