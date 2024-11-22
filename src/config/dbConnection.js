@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-async function connectMongoDb(url) {
+export async function connectMongoDb(url) {
   try {
     await mongoose.connect(url);
     console.log("Database connection stabilized successfully.");
@@ -9,8 +9,3 @@ async function connectMongoDb(url) {
     throw error;
   }
 }
-
-
-module.exports = {
-  connectMongoDb,
-};

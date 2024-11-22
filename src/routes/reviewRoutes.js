@@ -1,7 +1,9 @@
-const express = require("express");
-
+import express from "express";
 
 const reviewRouter = express.Router();
 
+reviewRouter.get("/", (req, res) => {
+  res.send("Review Router Working!");
+});
 
-module.exports = reviewRouter;
+export default reviewRouter;

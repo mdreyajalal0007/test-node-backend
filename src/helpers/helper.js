@@ -1,39 +1,36 @@
-const bcrypt = require("bcrypt");
-const {jwt,sign} = require("jsonwebtoken");
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-const isMobileValid = (mobileNumber) => {
-  // Remove non-digit characters
+// Mobile number validation
+export const isMobileValid = (mobileNumber) => {
   const cleanedNumber = mobileNumber.toString().replace(/\D/g, "");
-
-  // Check if the cleaned number is exactly 10 digits long
   return cleanedNumber.length === 10;
 };
 
-const isValidEmail = (email) => {
-  // Regular expression for basic email validation
+// Email validation
+export const isValidEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
 
-// function generatePasswordHash(password) {
-//   return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-// }
-
-async function generatePasswordHash(password) {
+// Generate password hash
+export async function generatePasswordHash(password) {
   const saltRounds = 10;
   const salt = await bcrypt.genSalt(saltRounds);
   const hash = await bcrypt.hash(password, salt);
   return hash;
 }
 
-async function comparePasswords(inputPassword, hashedPassword) {
+// Compare passwords
+export async function comparePasswords(inputPassword, hashedPassword) {
   return await bcrypt.compare(inputPassword, hashedPassword);
 }
 
-const secretKey = "mysecrete@dsjhf3sjdhfkjsd878key"; // Replace with your actual secret key
+const secretKey = "mysecrete@dsjhf3sjdhfkjsd878key";
 
- async function generateLoginToken(loginData) {
-  let token = await sign(
+// Generate login token
+export async function generateLoginToken(loginData) {
+  let token = jwt.sign(
     {
       ...loginData,
     },
@@ -44,7 +41,8 @@ const secretKey = "mysecrete@dsjhf3sjdhfkjsd878key"; // Replace with your actual
   return token;
 }
 
-function verifyToken(token) {
+// Verify token
+export function verifyToken(token) {
   try {
     const decoded = jwt.verify(token, secretKey);
     return { success: true, decoded };
@@ -53,11 +51,19 @@ function verifyToken(token) {
   }
 }
 
-module.exports = {
-  isMobileValid,
-  isValidEmail,
-  generatePasswordHash,
-  generateLoginToken,
-  verifyToken,
-  comparePasswords,
-};
+// Authenticate token middleware
+export async function authenticateToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ message: "Token missing, authorization denied." });
+  }
+
+  try {
+    const decoded = jwt.verify(token, secretKey);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(403).json({ message: "Invalid or expired token." });
+  }
+}

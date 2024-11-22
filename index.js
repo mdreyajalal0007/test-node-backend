@@ -1,18 +1,17 @@
-const express = require("express");
-require("dotenv").config();
-const userRouter = require("./src/routes/userRoutes");
-const reviewRouter = require("./src/routes/reviewRoutes");
-const { connectMongoDb } = require("./src/config/dbConnection");
+import express from "express";
+import dotenv from "dotenv";
+import { connectMongoDb } from "./src/config/dbConnection.js";
+import router from "./src/routes/index.js"; // Use the correct path and .js extension
+
+dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(router);
 
 const port = parseInt(process.env.PORT_NUMBER, 10);
 
 connectMongoDb(process.env.MONGODB_URL);
-//router 
-app.use("/api/users", userRouter); 
-app.use("/api/review", reviewRouter);
 
 app.listen(port, () => {
   console.log(`This application is listening on port number: ${port}`);
